@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: oussama24/frontendapp:3.0
+          image: oussama24/frontendapp:latest
           ports:
             - containerPort: 3000 
           
