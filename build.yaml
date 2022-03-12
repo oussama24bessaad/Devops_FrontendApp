@@ -9,11 +9,6 @@ spec:
     command:
     - /bin/cat
     tty: true    
-  - name: frontend
-    image: gcr.io/kaniko-project/executor:debug
-    command:
-    - /busybox/cat
-    tty: true
     volumeMounts:
       - name: frontend-secret
         mountPath: /frontend/.docker
