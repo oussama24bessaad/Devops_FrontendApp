@@ -3,26 +3,26 @@ pipeline{
         imagename = "oussama24/frontendapp"
         registryCredential = "dockerhub_credentials"
         dockerImage = 'frontendapp'
-        
     }
     agent any
     stages{
-        stage("SonarQube analysis"){
+
+            
+        
+        stage('SonarQube analysis') {
+                    
             steps{
                 script {
-                    scannerHome = tool 'SonarQube Scanner 4.6.2.2472'
-                }
-                    withSonarQubeEnv("SonarQube Scanner") {
-                    sh "${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=oussamaDevops \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=admin \
-                        -Dsonar.password=admin007"
-                    } 
-                }
+               scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv('sonarqube-server') { 
+        
+                       sh "${scannerHome}/bin/sonar-scanner"
+                     
+                    }
+                }         
             }
         }
+        
         stage("build"){
             
             steps{
@@ -30,15 +30,10 @@ pipeline{
                 sh 'npm run build'
             }
         }
-//         stage('Login') {
-
-// 			steps {
-// 				sh 'echo $registryCredential_PSW | docker login -u $registryCredential_USR --password-stdin'
-// 			}
-// 		}
-        
+      
         stage("docker-build"){
-            steps{
+            steps{  
+                    
                     script {
                     dockerImage = docker.build imagename   
                     docker.withRegistry( '', registryCredential ) {
@@ -48,7 +43,7 @@ pipeline{
                 }
             }
         }
-        stage("deploy"){
+         stage("deploy"){
              steps{ 
             script {
           kubernetesDeploy(configs: "frontend-deployment.yml", kubeconfigId: "kubernetes")
@@ -56,4 +51,5 @@ pipeline{
         }
       }
     }
-}
+        }
+    }
