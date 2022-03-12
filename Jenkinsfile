@@ -1,17 +1,11 @@
 pipeline{
-    options {
-    ansiColor('xterm')
-  }
+ 
     environment {
         imagename = "oussama24/frontendapp"
         registryCredential = "dockerhub_credentials"
         dockerImage = 'frontendapp'
     }
-     agent {
-    kubernetes {
-      yamlFile 'builder.yaml'
-    }
-  }
+    agent any
     stages{
 
             
@@ -54,7 +48,7 @@ pipeline{
       steps {
         container('kubectl') {
           withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
-            sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" front-deployment.yml'
+            
             sh 'kubectl apply -f front-deployment.yml'
           }
         }
