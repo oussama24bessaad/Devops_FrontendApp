@@ -5,7 +5,7 @@ pipeline{
         registryCredential = "dockerhub_credentials"
         dockerImage = 'frontendapp'
     }
-    agent any
+    agent kubernetes
     stages{
 
             
@@ -46,7 +46,7 @@ pipeline{
         }
         stage('Deploy App to Kubernetes') {     
       steps {
-        script {
+        container('kubectl') {
           withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
             
             sh 'kubectl apply -f front-deployment.yml'
