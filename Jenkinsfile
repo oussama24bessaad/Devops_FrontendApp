@@ -1,10 +1,17 @@
 pipeline{
+    options {
+    ansiColor('xterm')
+  }
     environment {
         imagename = "oussama24/frontendapp"
         registryCredential = "dockerhub_credentials"
         dockerImage = 'frontendapp'
     }
-    agent any
+     agent {
+    kubernetes {
+      yamlFile 'builder.yaml'
+    }
+  }
     stages{
 
             
@@ -43,11 +50,13 @@ pipeline{
                 }
             }
         }
-         stage("deploy"){
-             steps{ 
-            script {
-          kubernetesDeploy(configs: "frontend-deployment.yml", kubeconfigId: "kubernetes")
-          
+        stage('Deploy App to Kubernetes') {     
+      steps {
+        container('kubectl') {
+          withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
+            sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" front-deployment.yml'
+            sh 'kubectl apply -f front-deployment.yml'
+          }
         }
       }
     }
