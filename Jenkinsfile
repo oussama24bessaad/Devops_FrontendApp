@@ -5,10 +5,7 @@ pipeline{
         registryCredential = "dockerhub_credentials"
         dockerImage = 'frontendapp'
     }
- agent 
- {
-  kubernetes{}
- }
+ agent any
   stages{
 
             
