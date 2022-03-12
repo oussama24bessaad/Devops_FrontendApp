@@ -49,6 +49,7 @@ pipeline{
             }
         }
         stage("deploy"){
+             steps{ 
             script {
           kubernetesDeploy(configs: "frontend-deployment.yml", kubeconfigId: "kubernetes")
           
